@@ -1,0 +1,61 @@
+{
+  "coaccs": [
+    {
+      "id": "1",
+      "ac1": "Jeanne",
+      "ac2": "Martine",
+      "titulaire1": true,
+      "titulaire2": true,
+      "start": "2020-01-01T00:00:00.001Z",
+      "address": "Rue de la loi 1, 1000 Bruxelles",
+      "previousId": null,
+      "end": "1969-12-31T00:00:00.002Z"
+    },
+    {
+      "id": "2",
+      "ac1": "Micheline",
+      "ac2": "Martine",
+      "start": "2024-04-02T00:00:00.000Z",
+      "address": "Rue de la loi 1, 1000 Bruxelles",
+      "previousId": "1",
+      "titulaire1": false,
+      "titulaire2": true,
+      "end": "1970-01-01T00:00:00.009Z"
+    },
+    {
+      "id": "3",
+      "ac1": "Micheline",
+      "ac2": "Dédé",
+      "start": "2024-04-10T00:00:00.000Z",
+      "address": "Rue de la loi 1, 1000 Bruxelles",
+      "previousId": "2",
+      "titulaire1": false,
+      "titulaire2": false,
+      "end": "2024-06-28T14:32:45.949Z"
+    },
+    {
+      "id": "4",
+      "ac1": "Micheline",
+      "ac2": "Gérard",
+      "start": "2024-04-29T00:00:00.000Z",
+      "address": "Rue de la loi 1, 1000 Bruxelles",
+      "previousId": "3",
+      "titulaire1": false,
+      "titulaire2": false,
+      "end": "2024-06-28T14:41:52.545Z"
+    },
+    {
+      "id": "5",
+      "ac1": "Micheline",
+      "ac2": "Gérard",
+      "start": "2024-06-29T00:00:00.000Z",
+      "address": "Rue de la loi 1, 1000 Bruxelles",
+      "previousId": "4",
+      "titulaire1": false,
+      "titulaire2": true
+    }
+  ],
+  "seq": {
+    "nextId": 6
+  }
+}
