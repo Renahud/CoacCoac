@@ -14,20 +14,32 @@ import {CoaccsService} from "../../services/coaccs.service";
   selector: "app-accueillante-coaccueil",
   standalone: true,
   template: `
-    <div>avec <a [routerLink]="['..', otherCoAccueillante.ac]">{{ otherCoAccueillante.ac }}
-      ({{ otherCoAccueillante.titulaire ? "T" : "R" }})</a> depuis {{ coAccueil.start | date }}
+    <div class="coaccueil">
+      Avec <a [routerLink]="['..', otherCoAccueillante.ac]">{{ otherCoAccueillante.ac }}
+      ({{ otherCoAccueillante.titulaire ? "T" : "R" }})</a>
+      depuis {{ coAccueil.start | date }}
       @if (coAccueil.end) {
         jusqu'à {{ coAccueil.end | date }}
       }
       @if (coAccueil.previousId && !sameAccueillante.titulaire) {
-        (remplace <a [routerLink]="['..', replacedAccueillante?.ac]">{{ replacedAccueillante?.ac }}</a>)
+        <div class="replacement">(remplace <a [routerLink]="['..', replacedAccueillante?.ac]">{{ replacedAccueillante?.ac }}</a>)</div>
       }
     </div>
   `,
   imports: [
     DatePipe,
     RouterLink
-  ]
+  ],
+  styles:[`
+    .replacement{
+        font-style: italic;
+        color: darkslategray;
+        padding-left: 20px;
+    }
+    .coaccueil{
+      padding: 5px;
+    }
+  `]
 })
 export class AccueillanteCoaccueilComponent implements OnInit{
     @Input() currentAccueillante! : CoAccueillante;

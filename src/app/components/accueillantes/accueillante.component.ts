@@ -54,8 +54,9 @@ import {CoAccueillante, findSameAccueillantePosition, getAccueillante} from "../
     .accueillante{
       margin: 30px;
       padding: 20px;
-      width: 50%;
+      width: 30%;
       background-color: aliceblue;
+      border-radius: 10px;
     }
     .remplacementForm{
       margin-top: 20px;
