@@ -1,9 +1,11 @@
-import {Component, inject, OnInit} from "@angular/core";
+import {Component, inject, OnInit, provideZoneChangeDetection} from "@angular/core";
 import {CoaccsService, CoAccueil} from "../../services/coaccs.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AsyncPipe, DatePipe} from "@angular/common";
 import {map} from "rxjs";
+import {AccueillanteCoaccueilComponent} from "./accueillante-coaccueil.component";
+import {CoAccueillante, findSameAccueillantePosition, getAccueillante} from "../../model/coaccueil";
 
 @Component({
   selector: "app-accueillante",
@@ -16,14 +18,10 @@ import {map} from "rxjs";
       } @else {
         <div>
           @for (coaccueil of coaccs; track coaccueil.id) {
-            <div>avec <a [routerLink]="['..', otherAccueillante(coaccueil).ac]">{{ otherAccueillante(coaccueil).ac }} ({{otherAccueillante(coaccueil).titulaire? "T" : "R"}})</a> depuis {{ coaccueil.start | date }}
-              @if (coaccueil.end){
-                jusqu'à {{ coaccueil.end | date}}
-              }
-              @if (coaccueil.previousId && !getAccueillante(coaccueil).titulaire){
-                (remplace <a [routerLink]="['..', replacedAccueillante(coaccueil)]">{{replacedAccueillante(coaccueil) }}</a>)
-              }
-            </div>
+            <app-accueillante-coaccueil
+                [currentAccueillante]="coAccueillante!"
+                [coAccueil]="coaccueil"
+            ></app-accueillante-coaccueil>
           }
         </div>
       <form class="remplacementForm" [formGroup]="formGroup">
@@ -71,7 +69,8 @@ import {map} from "rxjs";
     ReactiveFormsModule,
     DatePipe,
     RouterLink,
-    AsyncPipe
+    AsyncPipe,
+    AccueillanteCoaccueilComponent
   ]
 })
 export class AccueillanteComponent implements OnInit{
@@ -79,6 +78,7 @@ export class AccueillanteComponent implements OnInit{
   service = inject(CoaccsService);
   route  = inject(ActivatedRoute);
   accueillante?: string;
+  coAccueillante?: CoAccueillante;
   router = inject(Router)
 
   formGroup = new FormGroup({
@@ -88,7 +88,7 @@ export class AccueillanteComponent implements OnInit{
     startDate: new FormControl<Date | undefined>(undefined, {validators: Validators.required}),
   })
   coaccs : CoAccueil[]  = []
-  previousCoaccueils  = new Map<string,CoAccueil>
+  // previousCoaccueils$  = new Map<string,CoAccueil>
 
   place!: string;
   current?: CoAccueil;
@@ -101,25 +101,19 @@ export class AccueillanteComponent implements OnInit{
           this.coaccs = res;
           this.current = this.coaccs[this.coaccs.length -1]
           this.place = this.accueillante === this.current.ac1 ? "1" : "2";
+          this.coAccueillante = getAccueillante(this.current!, this.place);
           this.coaccs
             .filter(c => !!c.previousId)
             .forEach(coAccueil => {
             this.service.getById(coAccueil.previousId!).subscribe( previous => {
-              this.previousCoaccueils.set(previous.id, previous)
+              // this.previousCoaccueils.set(previous.id, previous)
+              provideZoneChangeDetection()
             })
           })
         });
       }
     })
 
-  }
-
-  otherAccueillante(coaccueil: CoAccueil) {
-    const otherPlace = this.place === "1" ? "2" : "1"
-    return {
-      ac : (coaccueil as any)[`ac${otherPlace}`] as string,
-      titulaire:  (coaccueil as any)[`titulaire${otherPlace}`] as boolean
-    }
   }
 
   addRemplacement() {
@@ -143,18 +137,5 @@ export class AccueillanteComponent implements OnInit{
     })
   }
 
-  getAccueillante(coAccueil: CoAccueil){
-    return {
-      ac : (coAccueil as any)[`ac${this.place}`] as string,
-      titulaire:  (coAccueil as any)[`titulaire${this.place}`] as boolean
-    }
-  }
 
-  replacedAccueillante(coaccueil: CoAccueil) {
-    let previous = this.previousCoaccueils.get(coaccueil.previousId!);
-    if(previous){
-      return this.getAccueillante(previous).ac
-    }
-    return "";
-  }
 }
