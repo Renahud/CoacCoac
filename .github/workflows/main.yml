@@ -2,7 +2,7 @@ name: Angular CI
 on:
   push:
     branches: [ main ]  pull_request:
-    branches: [ main ]  workflow_dispatch:jobs:
+    # branches: [ main ]  workflow_dispatch:jobs:
   build:
     runs-on: ubuntu-latest    steps:
       - uses: actions/checkout@v2      - name: Cache node modules
