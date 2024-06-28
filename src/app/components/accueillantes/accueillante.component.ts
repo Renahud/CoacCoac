@@ -32,7 +32,7 @@ import {CoAccueillante, findSameAccueillantePosition, getAccueillante} from "../
         </div>
         <div>
           Accueillante remplacée
-          <input formControlName="oldAc">
+          <input formControlName="oldAc" >
         </div>
         <div>
           Accueillante remplaçante
@@ -112,8 +112,10 @@ export class AccueillanteComponent implements OnInit{
             })
           })
         });
+        this.formGroup.controls.oldAc.setValue(this.accueillante);
+        this.formGroup.controls.oldAc.disable();
       }
-    })
+    });
 
   }
 
