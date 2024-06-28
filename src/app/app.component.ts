@@ -2,8 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {RouterLink, RouterOutlet} from '@angular/router';
 import {CoaccsService, CoAccueil} from "./services/coaccs.service";
 import {DatePipe, JsonPipe} from "@angular/common";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
-import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-root',
@@ -22,6 +21,8 @@ import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
           <div  class="cell"> {{ coaccueil.start | date}}</div>
           <div  class="cell"> {{ coaccueil.end | date}}</div>
           <div  class="cell"> {{ coaccueil.address}}</div>
+          <div  class="cell"> {{ coaccueil.sae}}</div>
+          <div  class="cell"> @if (coaccueil.previousId){-> {{ coaccueil.previousId}}}</div>
         </div>
       }
     </div>
@@ -58,4 +59,3 @@ export class AppComponent implements OnInit{
   }
 
 }
-export type RemplacementType = "Definitif" | "Temporaire";

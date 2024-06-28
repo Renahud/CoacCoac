@@ -1,8 +1,9 @@
 import {Component, inject, OnInit} from "@angular/core";
 import {CoaccsService, CoAccueil} from "../../services/coaccs.service";
-import {ActivatedRoute, RouterLink} from "@angular/router";
+import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {DatePipe} from "@angular/common";
+import {AsyncPipe, DatePipe} from "@angular/common";
+import {map} from "rxjs";
 
 @Component({
   selector: "app-accueillante",
@@ -15,9 +16,12 @@ import {DatePipe} from "@angular/common";
       } @else {
         <div>
           @for (coaccueil of coaccs; track coaccueil.id) {
-            <div>avec <a [routerLink]="['..', otherAccueillante(coaccueil)]">{{ otherAccueillante(coaccueil) }}</a> depuis {{ coaccueil.start | date }}
+            <div>avec <a [routerLink]="['..', otherAccueillante(coaccueil).ac]">{{ otherAccueillante(coaccueil).ac }} ({{otherAccueillante(coaccueil).titulaire? "T" : "R"}})</a> depuis {{ coaccueil.start | date }}
               @if (coaccueil.end){
                 jusqu'à {{ coaccueil.end | date}}
+              }
+              @if (coaccueil.previousId && !getAccueillante(coaccueil).titulaire){
+                (remplace <a [routerLink]="['..', replacedAccueillante(coaccueil)]">{{replacedAccueillante(coaccueil) }}</a>)
               }
             </div>
           }
@@ -66,14 +70,16 @@ import {DatePipe} from "@angular/common";
     FormsModule,
     ReactiveFormsModule,
     DatePipe,
-    RouterLink
+    RouterLink,
+    AsyncPipe
   ]
 })
 export class AccueillanteComponent implements OnInit{
 
-    service = inject(CoaccsService);
-    route  = inject(ActivatedRoute);
-    accueillante?: string;
+  service = inject(CoaccsService);
+  route  = inject(ActivatedRoute);
+  accueillante?: string;
+  router = inject(Router)
 
   formGroup = new FormGroup({
     temporary : new FormControl<boolean>(true),
@@ -81,41 +87,74 @@ export class AccueillanteComponent implements OnInit{
     newAc : new FormControl<string|undefined>(undefined, {validators: Validators.required}),
     startDate: new FormControl<Date | undefined>(undefined, {validators: Validators.required}),
   })
-
-
   coaccs : CoAccueil[]  = []
-    ngOnInit(): void {
-      this.route.params.subscribe(params => {
-        this.accueillante = params["accueillante"] ;
-        if(this.accueillante){
-          this.service.getByAccueillante(this.accueillante).subscribe(res => this.coaccs = res);
-        }
-      })
+  previousCoaccueils  = new Map<string,CoAccueil>
 
-    }
+  place!: string;
+  current?: CoAccueil;
+
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.accueillante = params["accueillante"] ;
+      if(this.accueillante){
+        this.service.getByAccueillante(this.accueillante).subscribe(res => {
+          this.coaccs = res;
+          this.current = this.coaccs[this.coaccs.length -1]
+          this.place = this.accueillante === this.current.ac1 ? "1" : "2";
+          this.coaccs
+            .filter(c => !!c.previousId)
+            .forEach(coAccueil => {
+            this.service.getById(coAccueil.previousId!).subscribe( previous => {
+              this.previousCoaccueils.set(previous.id, previous)
+            })
+          })
+        });
+      }
+    })
+
+  }
 
   otherAccueillante(coaccueil: CoAccueil) {
-    return this.accueillante === coaccueil.ac1 ? coaccueil.ac2 : coaccueil.ac1;
+    const otherPlace = this.place === "1" ? "2" : "1"
+    return {
+      ac : (coaccueil as any)[`ac${otherPlace}`] as string,
+      titulaire:  (coaccueil as any)[`titulaire${otherPlace}`] as boolean
+    }
   }
 
   addRemplacement() {
     let value = this.formGroup.getRawValue();
-    const current = this.coaccs[this.coaccs.length -1]
 
     this.service.nextSeq().subscribe(newId => {
       this.service.saveCoaccueil({
         id: String(newId),
-        ac1: current.ac1 === value.oldAc ? value.newAc! : current.ac1! ,
-        ac2: current.ac2 === value.oldAc ? value.newAc! : current.ac2!,
+        ac1: this.place === "1" ? value.newAc! : this.current?.ac1! ,
+        ac2: this.place === "2" ? value.newAc! : this.current?.ac2!,
         start: new Date(value.startDate!),
-        address: current.address,
-        previousId: String(current.id),
-        titulaire1: current.ac1 === value.oldAc ? !value.temporary: current.titulaire1 ,
-        titulaire2: current.ac2 === value.oldAc ? !value.temporary: current.titulaire2
+        address: this.current?.address || "pas d'adresse",
+        previousId: String(this.current?.id),
+        titulaire1: this.place === "1" ? !value.temporary: this.current!.titulaire1 ,
+        titulaire2: this.place === "2" ? !value.temporary: this.current!.titulaire2,
+        sae: this.current!.sae
       }).subscribe( res => {
-
+        this.router.navigate(["..", this.accueillante], {relativeTo:this.route, onSameUrlNavigation:"reload"})
       });
 
     })
+  }
+
+  getAccueillante(coAccueil: CoAccueil){
+    return {
+      ac : (coAccueil as any)[`ac${this.place}`] as string,
+      titulaire:  (coAccueil as any)[`titulaire${this.place}`] as boolean
+    }
+  }
+
+  replacedAccueillante(coaccueil: CoAccueil) {
+    let previous = this.previousCoaccueils.get(coaccueil.previousId!);
+    if(previous){
+      return this.getAccueillante(previous).ac
+    }
+    return "";
   }
 }

@@ -2,60 +2,111 @@
   "coaccs": [
     {
       "id": "1",
-      "ac1": "Jeanne",
-      "ac2": "Martine",
+      "ac1": "Karine",
+      "ac2": "Sophie",
       "titulaire1": true,
       "titulaire2": true,
+      "sae": "Marmotine",
       "start": "2020-01-01T00:00:00.001Z",
-      "address": "Rue de la loi 1, 1000 Bruxelles",
+      "address": "Rue du paradis, 42 NAMUR",
       "previousId": null,
-      "end": "1969-12-31T00:00:00.002Z"
+      "end": "2020-01-31T04:00:00.000Z"
     },
     {
       "id": "2",
-      "ac1": "Micheline",
-      "ac2": "Martine",
-      "start": "2024-04-02T00:00:00.000Z",
-      "address": "Rue de la loi 1, 1000 Bruxelles",
-      "previousId": "1",
-      "titulaire1": false,
+      "ac1": "Kathy",
+      "ac2": "Jeanne",
+      "start": "2020-01-01T00:00:00.000Z",
+      "address": "Rue des enfers, 666 BRUXELLES",
+      "sae": "SAC Miguel",
+      "titulaire1": true,
       "titulaire2": true,
-      "end": "1970-01-01T00:00:00.009Z"
+      "end": "2020-01-31T04:00:00.000Z"
     },
     {
       "id": "3",
-      "ac1": "Micheline",
-      "ac2": "Dédé",
-      "start": "2024-04-10T00:00:00.000Z",
-      "address": "Rue de la loi 1, 1000 Bruxelles",
+      "ac1": "Kathy",
+      "ac2": "Adèle",
+      "start": "2020-02-01T00:00:00.000Z",
+      "address": "Rue des enfers, 666 BRUXELLES",
+      "sae": "SAC Miguel",
       "previousId": "2",
-      "titulaire1": false,
+      "titulaire1": true,
       "titulaire2": false,
-      "end": "2024-06-28T14:32:45.949Z"
+      "end": "2020-02-29T04:00:00.000Z"
     },
     {
       "id": "4",
-      "ac1": "Micheline",
-      "ac2": "Gérard",
-      "start": "2024-04-29T00:00:00.000Z",
-      "address": "Rue de la loi 1, 1000 Bruxelles",
-      "previousId": "3",
-      "titulaire1": false,
+      "ac1": "Karine",
+      "ac2": "Carla",
+      "start": "2020-02-01T00:00:00.000Z",
+      "address": "Rue du paradis, 42 NAMUR",
+      "sae": "Marmotine",
+      "previousId": "1",
+      "titulaire1": true,
       "titulaire2": false,
-      "end": "2024-06-28T14:41:52.545Z"
+      "end": "2020-03-31T04:00:00.000Z"
     },
     {
       "id": "5",
-      "ac1": "Micheline",
-      "ac2": "Gérard",
-      "start": "2024-06-29T00:00:00.000Z",
-      "address": "Rue de la loi 1, 1000 Bruxelles",
+      "ac1": "Kathy",
+      "ac2": "Jeanne",
+      "start": "2020-03-01T00:00:00.000Z",
+      "address": "Rue des enfers, 666 BRUXELLES",
+      "sae": "SAC Miguel",
+      "previousId": "3",
+      "titulaire1": true,
+      "titulaire2": true,
+      "end": "2020-03-31T04:00:00.000Z"
+    },
+    {
+      "id": "6",
+      "ac1": "Karine",
+      "ac2": "Marcelle",
+      "start": "2020-04-01T00:00:00.000Z",
+      "address": "Rue du paradis, 42 NAMUR",
+      "sae": "Marmotine",
       "previousId": "4",
+      "titulaire1": true,
+      "titulaire2": false,
+      "end": "2020-04-30T04:00:00.000Z"
+    },
+    {
+      "id": "7",
+      "ac1": "Carla",
+      "ac2": "Jeanne",
+      "start": "2020-04-01T00:00:00.000Z",
+      "address": "Rue des enfers, 666 BRUXELLES",
+      "sae": "SAC Miguel",
+      "previousId": "5",
       "titulaire1": false,
       "titulaire2": true
+    },
+    {
+      "id": "8",
+      "ac1": "Géraldine",
+      "ac2": "Marcelle",
+      "start": "2020-05-01T00:00:00.000Z",
+      "address": "Rue du paradis, 42 NAMUR",
+      "previousId": "6",
+      "titulaire1": false,
+      "titulaire2": false,
+      "sae": "Marmotine",
+      "end": "2020-05-31T04:00:00.000Z"
+    },
+    {
+      "id": "9",
+      "ac1": "Géraldine",
+      "ac2": "Marcelle",
+      "start": "2020-06-01T00:00:00.000Z",
+      "address": "Rue du paradis, 42 NAMUR",
+      "previousId": "8",
+      "titulaire1": true,
+      "titulaire2": false,
+      "sae": "Marmotine"
     }
   ],
   "seq": {
-    "nextId": 6
+    "nextId": 10
   }
 }

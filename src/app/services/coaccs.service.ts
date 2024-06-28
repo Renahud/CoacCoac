@@ -38,8 +38,7 @@ export class CoaccsService{
   saveCoaccueil(coAccueil: CoAccueil) {
     if(coAccueil.previousId){
       this.getById(coAccueil.previousId).subscribe(previous => {
-        previous.end = new Date()
-        previous.end.setDate(coAccueil.start.getDate() - 1);
+        previous.end = new Date(coAccueil.start.getTime() - (1000 * 60 * 60 * 20))
         this.updateCoAccueil(previous).subscribe()
       })
     }
@@ -60,5 +59,6 @@ export type CoAccueil = {
     start: Date,
     end?: Date,
     address: string,
-    previousId?: string
+    previousId?: string,
+    sae: string
 }
