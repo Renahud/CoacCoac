@@ -24,6 +24,7 @@ import {LocalCoaccsService} from "./services/local-coaccs.service";
           <div  class="cell"> {{ coaccueil.address}}</div>
           <div  class="cell"> {{ coaccueil.sae}}</div>
           <div  class="cell"> @if (coaccueil.previousId){-> {{ coaccueil.previousId}}}</div>
+          <div class="cell"><button (click)="delete(coaccueil)">Delete</button></div>
         </div>
       }
     </div>
@@ -59,4 +60,7 @@ export class AppComponent implements OnInit{
       });
   }
 
+  delete(coaccueil: CoAccueil) {
+    this.service.deleteCoaccueil(coaccueil).subscribe()
+  }
 }

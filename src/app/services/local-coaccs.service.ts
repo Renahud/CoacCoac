@@ -52,6 +52,12 @@ export class LocalCoaccsService{
   getById(id: string){
     return new Observable<CoAccueil>(obs => obs.next(db.find(c => c.id === id)!));
   }
+
+  deleteCoaccueil(coaccueil: CoAccueil) {
+    return new Observable(obs => {
+      db.splice(db.indexOf(coaccueil), 1);
+    })
+  }
 }
 
 export type CoAccueil = {
