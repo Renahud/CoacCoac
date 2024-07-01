@@ -3,6 +3,7 @@ import {RouterLink, RouterOutlet} from '@angular/router';
 import {CoaccsService, CoAccueil} from "./services/coaccs.service";
 import {DatePipe, JsonPipe} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
+import {LocalCoaccsService} from "./services/local-coaccs.service";
 
 @Component({
   selector: 'app-root',
@@ -49,7 +50,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 export class AppComponent implements OnInit{
   title = 'Coac';
   coaccs: CoAccueil[] = []
-  service = inject(CoaccsService);
+  service = inject(LocalCoaccsService);
 
   ngOnInit(): void {
     console.log("test")

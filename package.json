@@ -5,10 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "buildWithDb": "ng build && npx json-server db.json",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "start-db": "npx json-server db.json"
+    "start-db": "npx json-server src/app/services/db.ts"
   },
   "private": true,
   "dependencies": {

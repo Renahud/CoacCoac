@@ -6,6 +6,7 @@ import {AsyncPipe, DatePipe} from "@angular/common";
 import {map} from "rxjs";
 import {AccueillanteCoaccueilComponent} from "./accueillante-coaccueil.component";
 import {CoAccueillante, findSameAccueillantePosition, getAccueillante} from "../../model/coaccueil";
+import {LocalCoaccsService} from "../../services/local-coaccs.service";
 
 @Component({
   selector: "app-accueillante",
@@ -76,7 +77,7 @@ import {CoAccueillante, findSameAccueillantePosition, getAccueillante} from "../
 })
 export class AccueillanteComponent implements OnInit{
 
-  service = inject(CoaccsService);
+  service = inject(LocalCoaccsService);
   route  = inject(ActivatedRoute);
   accueillante?: string;
   coAccueillante?: CoAccueillante;
