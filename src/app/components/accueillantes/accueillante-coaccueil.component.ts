@@ -9,6 +9,7 @@ import {
 import {DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
 import {CoaccsService} from "../../services/coaccs.service";
+import {LocalCoaccsService} from "../../services/local-coaccs.service";
 
 @Component({
   selector: "app-accueillante-coaccueil",
@@ -47,7 +48,7 @@ export class AccueillanteCoaccueilComponent implements OnInit{
 
     previousCoAccueil?: CoAccueil
 
-    service = inject(CoaccsService);
+    service = inject(LocalCoaccsService);
 
 
     sameAccueillante!: CoAccueillante
