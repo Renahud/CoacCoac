@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
-import {map, Observable} from "rxjs";
-import {db, seq} from "./db"
+import {map, Observable, Subject} from "rxjs";
+import {seq} from "./db"
+import {CoaccsService} from "./coaccs.service";
 
 
 @Injectable({
@@ -8,16 +9,26 @@ import {db, seq} from "./db"
 })
 export class LocalCoaccsService{
 
-  getAll(): Observable<CoAccueil[]>{
-    return new Observable(observer => {
-      observer.next(db);
+  db$ = new Subject<CoAccueil[]>();
+  currentDB: CoAccueil[] = [];
+
+  init(db: CoAccueil[]) {
+    this.db$.subscribe(data => {
+      console.log("new DB", data)
+      this.currentDB = data
     });
+    this.load(db);
+  }
+
+  getAll(): Observable<CoAccueil[]>{
+    return this.db$;
   }
 
   getByAccueillante(accueillante: string) {
-    return this.getAll().pipe(
+    /*return this.getAll().pipe(
       map(res => res.filter(coacc => coacc.ac1 === accueillante || coacc.ac2 === accueillante))
-    )
+    )*/
+    return new Observable<CoAccueil[]>(obs => obs.next(this.currentDB.filter(coacc => coacc.ac1 === accueillante || coacc.ac2 === accueillante)))
   }
 
   nextSeq(){
@@ -30,8 +41,9 @@ export class LocalCoaccsService{
 
   updateCoAccueil(coAccueil: CoAccueil){
     return new Observable(obs => {
-      let index = db.indexOf(db.find(c => c.id === coAccueil.id)!);
-      db[index] = coAccueil;
+      let index = this.currentDB.indexOf(this.currentDB.find(c => c.id === coAccueil.id)!);
+      this.currentDB[index] = coAccueil;
+      this.db$.next(this.currentDB);
       obs.next(coAccueil)
     });
   }
@@ -44,19 +56,33 @@ export class LocalCoaccsService{
           this.updateCoAccueil(previous).subscribe()
         })
       }
-      db.push(coAccueil);
+      this.currentDB.push(coAccueil);
+      this.db$.next(this.currentDB);
       obs.next(coAccueil);
     })
   }
 
   getById(id: string){
-    return new Observable<CoAccueil>(obs => obs.next(db.find(c => c.id === id)!));
+    const found = this.currentDB.find(c => c.id === id)!;
+    return new Observable<CoAccueil>(obs => {
+      obs.next(found)
+    });
+    /*return this.db$.pipe(
+      map(data => data.find(c => c.id === id)!)
+    );*/
   }
 
   deleteCoaccueil(coaccueil: CoAccueil) {
     return new Observable(obs => {
-      db.splice(db.indexOf(coaccueil), 1);
+      this.currentDB.splice(this.currentDB.indexOf(coaccueil), 1);
+      this.db$.next(this.currentDB);
     })
+  }
+
+  load(coaccs: CoAccueil[]){
+    this.db$.next(coaccs);
+    let maxId = coaccs.map(c => c.id).sort((id1, id2) => id1<id2? -1 : id1>id2 ? 1 : 0).reverse()[0];
+    seq.nextId = Number(maxId) +1;
   }
 }
 

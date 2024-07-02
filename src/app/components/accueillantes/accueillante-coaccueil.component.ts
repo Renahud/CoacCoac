@@ -62,6 +62,7 @@ export class AccueillanteCoaccueilComponent implements OnInit{
       this.otherCoAccueillante = getAccueillante(this.coAccueil, this.position === "1"? "2" : "1");
       if(this.coAccueil.previousId){
         this.service.getById(this.coAccueil.previousId).subscribe(res => {
+          console.log("replaced accueillante res = ", res)
           this.previousCoAccueil = res
           this.replacedAccueillante = this.previousCoAccueil? getAccueillante(this.previousCoAccueil, this.position) : undefined;
         });

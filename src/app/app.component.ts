@@ -1,14 +1,15 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, provideZoneChangeDetection} from '@angular/core';
 import {RouterLink, RouterOutlet} from '@angular/router';
-import {CoaccsService, CoAccueil} from "./services/coaccs.service";
+import {CoAccueil} from "./services/coaccs.service";
 import {DatePipe, JsonPipe} from "@angular/common";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {LocalCoaccsService} from "./services/local-coaccs.service";
+import {db} from "./services/db";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, JsonPipe, ReactiveFormsModule, RouterLink, DatePipe],
+  imports: [RouterOutlet, JsonPipe, ReactiveFormsModule, RouterLink, DatePipe, FormsModule],
   template: `
 
     <router-outlet />
@@ -26,6 +27,13 @@ import {LocalCoaccsService} from "./services/local-coaccs.service";
           <div  class="cell"> @if (coaccueil.previousId){-> {{ coaccueil.previousId}}}</div>
           <div class="cell"><button (click)="delete(coaccueil)">Delete</button></div>
         </div>
+        }
+        <button (click)="showJSON = !showJSON">voir JSON</button>
+        @if(showJSON){
+        <div style="background-color: lightgray; font-family: 'JetBrains Mono'; padding: 10px" >
+          {{coaccs | json}}
+        </div>
+        <textarea [(ngModel)]="importJson" style="width: 500px"></textarea><button (click)="import()">importer la db</button>
       }
     </div>
   `,
@@ -49,18 +57,27 @@ import {LocalCoaccsService} from "./services/local-coaccs.service";
   `]
 })
 export class AppComponent implements OnInit{
-  title = 'Coac';
   coaccs: CoAccueil[] = []
   service = inject(LocalCoaccsService);
+  showJSON = false;
+  importJson: string ="";
 
   ngOnInit(): void {
-    console.log("test")
+
       this.service.getAll().subscribe(res => {
+        console.log("res2", res)
         this.coaccs = res;
       });
+
+    //this.service.load(db)
   }
 
   delete(coaccueil: CoAccueil) {
     this.service.deleteCoaccueil(coaccueil).subscribe()
+  }
+
+  import(){
+    const importdb = JSON.parse(this.importJson) as CoAccueil[];
+    this.service.load(importdb);
   }
 }
