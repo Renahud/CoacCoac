@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {map, Observable} from "rxjs";
 import {db, seq} from "./db"
+import {comparatorOf} from "../model/comparators";
 
 
 @Injectable({
@@ -10,7 +11,7 @@ export class LocalCoaccsService{
 
   getAll(): Observable<CoAccueil[]>{
     return new Observable(observer => {
-      observer.next(db);
+      observer.next(db.sort(comparatorOf(c => Number(c.id))));
     });
   }
 
