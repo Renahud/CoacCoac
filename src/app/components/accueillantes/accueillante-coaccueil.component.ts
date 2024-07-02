@@ -1,14 +1,7 @@
 import {Component, inject, Input, OnInit} from "@angular/core";
-import {
-  CoAccueil,
-  CoAccueillante,
-  findPosition,
-  findSameAccueillantePosition,
-  getAccueillante
-} from "../../model/coaccueil";
+import {CoAccueil, CoAccueillante, findSameAccueillantePosition, getAccueillante} from "../../model/coaccueil";
 import {DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
-import {CoaccsService} from "../../services/coaccs.service";
 import {LocalCoaccsService} from "../../services/local-coaccs.service";
 
 @Component({
@@ -66,6 +59,10 @@ export class AccueillanteCoaccueilComponent implements OnInit{
           this.replacedAccueillante = this.previousCoAccueil? getAccueillante(this.previousCoAccueil, this.position) : undefined;
         });
       }
+
+     /* console.log("currentAcueillante", this.currentAccueillante)
+      console.log("sameAccueillante", this.sameAccueillante)
+      console.log("otherCoAccueillante", this.otherCoAccueillante)*/
     }
 
 }

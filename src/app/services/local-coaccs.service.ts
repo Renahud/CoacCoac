@@ -11,7 +11,8 @@ export class LocalCoaccsService{
 
   getAll(): Observable<CoAccueil[]>{
     return new Observable(observer => {
-      observer.next(db.sort(comparatorOf(c => Number(c.id))));
+      this.sortDb()
+      observer.next(db);
     });
   }
 
@@ -33,6 +34,7 @@ export class LocalCoaccsService{
     return new Observable(obs => {
       let index = db.indexOf(db.find(c => c.id === coAccueil.id)!);
       db[index] = coAccueil;
+      db.sort(comparatorOf(c => Number(c.id)))
       obs.next(coAccueil)
     });
   }
@@ -46,6 +48,7 @@ export class LocalCoaccsService{
         })
       }
       db.push(coAccueil);
+      this.sortDb()
       obs.next(coAccueil);
     })
   }
@@ -57,7 +60,12 @@ export class LocalCoaccsService{
   deleteCoaccueil(coaccueil: CoAccueil) {
     return new Observable(obs => {
       db.splice(db.indexOf(coaccueil), 1);
+      this.sortDb()
     })
+  }
+
+  sortDb(){
+    db.sort(comparatorOf(c => Number(c.id))).reverse();
   }
 }
 

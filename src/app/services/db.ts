@@ -1,6 +1,6 @@
 import {CoAccueil} from "./local-coaccs.service";
 
-export const db :CoAccueil[] =
+export var db :CoAccueil[] =
   [
     {
       "id": "1",

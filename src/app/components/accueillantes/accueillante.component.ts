@@ -1,11 +1,10 @@
 import {Component, inject, OnInit, provideZoneChangeDetection} from "@angular/core";
-import {CoaccsService, CoAccueil} from "../../services/coaccs.service";
+import {CoAccueil} from "../../services/coaccs.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AsyncPipe, DatePipe} from "@angular/common";
-import {map} from "rxjs";
 import {AccueillanteCoaccueilComponent} from "./accueillante-coaccueil.component";
-import {CoAccueillante, findSameAccueillantePosition, getAccueillante} from "../../model/coaccueil";
+import {CoAccueillante, getAccueillante} from "../../model/coaccueil";
 import {LocalCoaccsService} from "../../services/local-coaccs.service";
 
 @Component({
@@ -18,7 +17,7 @@ import {LocalCoaccsService} from "../../services/local-coaccs.service";
         Pas de Coaccueil
       } @else {
         <div>
-          @for (coaccueil of coaccs; track coaccueil.id) {
+          @for (coaccueil of coaccs; track coaccueil) {
             <app-accueillante-coaccueil
                 [currentAccueillante]="coAccueillante!"
                 [coAccueil]="coaccueil"
@@ -90,7 +89,6 @@ export class AccueillanteComponent implements OnInit{
     startDate: new FormControl<Date | undefined>(undefined, {validators: Validators.required}),
   })
   coaccs : CoAccueil[]  = []
-  // previousCoaccueils$  = new Map<string,CoAccueil>
 
   place!: string;
   current?: CoAccueil;
@@ -104,14 +102,10 @@ export class AccueillanteComponent implements OnInit{
           this.current = this.coaccs[this.coaccs.length -1]
           this.place = this.accueillante === this.current.ac1 ? "1" : "2";
           this.coAccueillante = getAccueillante(this.current!, this.place);
-          this.coaccs
-            .filter(c => !!c.previousId)
-            .forEach(coAccueil => {
-            this.service.getById(coAccueil.previousId!).subscribe( previous => {
-              // this.previousCoaccueils.set(previous.id, previous)
-              provideZoneChangeDetection()
-            })
-          })
+          /*console.log("current", this.current)
+          console.log("place", this.place)
+          console.log("this.coAccueillante", this.coAccueillante)*/
+
         });
         this.formGroup.controls.oldAc.setValue(this.accueillante);
         this.formGroup.controls.oldAc.disable();
