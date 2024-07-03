@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {map, Observable, Subject} from "rxjs";
 import {seq} from "./db"
 import {CoaccsService} from "./coaccs.service";
+import {comparatorOf} from "../model/comparators";
 
 
 @Injectable({
@@ -16,6 +17,7 @@ export class LocalCoaccsService{
     this.db$.subscribe(data => {
       console.log("new DB", data)
       this.currentDB = data
+      this.sortDb();
     });
     this.load(db);
   }
@@ -83,6 +85,10 @@ export class LocalCoaccsService{
     this.db$.next(coaccs);
     let maxId = coaccs.map(c => c.id).sort((id1, id2) => id1<id2? -1 : id1>id2 ? 1 : 0).reverse()[0];
     seq.nextId = Number(maxId) +1;
+  }
+
+  sortDb(){
+    this.currentDB.sort(comparatorOf(c => Number(c.id))).reverse();
   }
 }
 

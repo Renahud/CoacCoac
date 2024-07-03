@@ -1,52 +1,53 @@
 import {Component, inject, OnInit, provideZoneChangeDetection} from "@angular/core";
-import {CoaccsService, CoAccueil} from "../../services/coaccs.service";
+import {CoAccueil} from "../../services/coaccs.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AsyncPipe, DatePipe} from "@angular/common";
-import {map} from "rxjs";
 import {AccueillanteCoaccueilComponent} from "./accueillante-coaccueil.component";
-import {CoAccueillante, findSameAccueillantePosition, getAccueillante} from "../../model/coaccueil";
+import {CoAccueillante, getAccueillante} from "../../model/coaccueil";
 import {LocalCoaccsService} from "../../services/local-coaccs.service";
 
 @Component({
   selector: "app-accueillante",
   standalone: true,
   template: `
-    <div class = "accueillante">
-        <h1> Co-accueils de {{ accueillante }}</h1>
+    <div class="accueillante">
+      <h1> Co-accueils de {{ accueillante }}</h1>
       @if (coaccs.length === 0) {
         Pas de Coaccueil
       } @else {
         <div>
-          @for (coaccueil of coaccs; track coaccueil.id) {
+          @for (coaccueil of coaccs; track coaccueil.id + coAccueillante?.position) {
+<!--            {{coaccueil.id + coAccueillante?.position}}-->
             <app-accueillante-coaccueil
-                [currentAccueillante]="coAccueillante!"
-                [coAccueil]="coaccueil"
+              [currentAccueillante]="coAccueillante!"
+              [coAccueil]="coaccueil"
+              [current]="current === coaccueil"
             ></app-accueillante-coaccueil>
           }
         </div>
-      <form class="remplacementForm" [formGroup]="formGroup">
-        <h3>Remplacer une accueillante</h3>
-        <div>
-          Temporaire ?
-          <input formControlName="temporary" type="checkbox">
-        </div>
-        <div>
-          Accueillante remplacée
-          <input formControlName="oldAc" >
-        </div>
-        <div>
-          Accueillante remplaçante
-          <input formControlName="newAc">
-        </div>
-        <div>
-          Date de début
-          <input formControlName="startDate" type="date">
-        </div>
-        <div>
+        <form class="remplacementForm" [formGroup]="formGroup">
+          <h3>Remplacer une accueillante</h3>
+          <div>
+            Temporaire ?
+            <input formControlName="temporary" type="checkbox">
+          </div>
+          <div>
+            Accueillante remplacée
+            <input formControlName="oldAc">
+          </div>
+          <div>
+            Accueillante remplaçante
+            <input formControlName="newAc">
+          </div>
+          <div>
+            Date de début
+            <input formControlName="startDate" type="date">
+          </div>
+          <div>
             <button (click)="addRemplacement()">Enregistrer</button>
-        </div>
-      </form>
+          </div>
+        </form>
 
       }
     </div>
@@ -90,28 +91,24 @@ export class AccueillanteComponent implements OnInit{
     startDate: new FormControl<Date | undefined>(undefined, {validators: Validators.required}),
   })
   coaccs : CoAccueil[]  = []
-  // previousCoaccueils$  = new Map<string,CoAccueil>
 
   place!: string;
   current?: CoAccueil;
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
+      // console.log("accueillante " + this.accueillante)
       this.accueillante = params["accueillante"] ;
       if(this.accueillante){
         this.service.getByAccueillante(this.accueillante).subscribe(res => {
           this.coaccs = res;
-          this.current = this.coaccs[this.coaccs.length -1]
+          this.current = this.coaccs[0]
           this.place = this.accueillante === this.current.ac1 ? "1" : "2";
           this.coAccueillante = getAccueillante(this.current!, this.place);
-          this.coaccs
-            .filter(c => !!c.previousId)
-            .forEach(coAccueil => {
-            this.service.getById(coAccueil.previousId!).subscribe( previous => {
-              // this.previousCoaccueils.set(previous.id, previous)
-              provideZoneChangeDetection()
-            })
-          })
+          console.log("current", this.current)
+          console.log("place", this.place)
+          console.log("this.coAccueillante", this.coAccueillante)
+
         });
         this.formGroup.controls.oldAc.setValue(this.accueillante);
         this.formGroup.controls.oldAc.disable();
@@ -139,6 +136,11 @@ export class AccueillanteComponent implements OnInit{
       });
 
     })
+  }
+
+  track(coAccueil : CoAccueil){
+    console.log("track", { coAccueil: coAccueil, accueillante: this.accueillante})
+    return { coAccueil: coAccueil, accueillante: this.accueillante}
   }
 
 
