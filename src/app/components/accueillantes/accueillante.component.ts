@@ -11,41 +11,43 @@ import {LocalCoaccsService} from "../../services/local-coaccs.service";
   selector: "app-accueillante",
   standalone: true,
   template: `
-    <div class = "accueillante">
-        <h1> Co-accueils de {{ accueillante }}</h1>
+    <div class="accueillante">
+      <h1> Co-accueils de {{ accueillante }}</h1>
       @if (coaccs.length === 0) {
         Pas de Coaccueil
       } @else {
         <div>
-          @for (coaccueil of coaccs; track coaccueil) {
+          @for (coaccueil of coaccs; track coaccueil.id + coAccueillante?.position) {
+<!--            {{coaccueil.id + coAccueillante?.position}}-->
             <app-accueillante-coaccueil
-                [currentAccueillante]="coAccueillante!"
-                [coAccueil]="coaccueil"
+              [currentAccueillante]="coAccueillante!"
+              [coAccueil]="coaccueil"
+              [current]="current === coaccueil"
             ></app-accueillante-coaccueil>
           }
         </div>
-      <form class="remplacementForm" [formGroup]="formGroup">
-        <h3>Remplacer une accueillante</h3>
-        <div>
-          Temporaire ?
-          <input formControlName="temporary" type="checkbox">
-        </div>
-        <div>
-          Accueillante remplacée
-          <input formControlName="oldAc" >
-        </div>
-        <div>
-          Accueillante remplaçante
-          <input formControlName="newAc">
-        </div>
-        <div>
-          Date de début
-          <input formControlName="startDate" type="date">
-        </div>
-        <div>
+        <form class="remplacementForm" [formGroup]="formGroup">
+          <h3>Remplacer une accueillante</h3>
+          <div>
+            Temporaire ?
+            <input formControlName="temporary" type="checkbox">
+          </div>
+          <div>
+            Accueillante remplacée
+            <input formControlName="oldAc">
+          </div>
+          <div>
+            Accueillante remplaçante
+            <input formControlName="newAc">
+          </div>
+          <div>
+            Date de début
+            <input formControlName="startDate" type="date">
+          </div>
+          <div>
             <button (click)="addRemplacement()">Enregistrer</button>
-        </div>
-      </form>
+          </div>
+        </form>
 
       }
     </div>
@@ -95,16 +97,17 @@ export class AccueillanteComponent implements OnInit{
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
+      // console.log("accueillante " + this.accueillante)
       this.accueillante = params["accueillante"] ;
       if(this.accueillante){
         this.service.getByAccueillante(this.accueillante).subscribe(res => {
           this.coaccs = res;
-          this.current = this.coaccs[this.coaccs.length -1]
+          this.current = this.coaccs[0]
           this.place = this.accueillante === this.current.ac1 ? "1" : "2";
           this.coAccueillante = getAccueillante(this.current!, this.place);
-          /*console.log("current", this.current)
+          console.log("current", this.current)
           console.log("place", this.place)
-          console.log("this.coAccueillante", this.coAccueillante)*/
+          console.log("this.coAccueillante", this.coAccueillante)
 
         });
         this.formGroup.controls.oldAc.setValue(this.accueillante);
@@ -133,6 +136,11 @@ export class AccueillanteComponent implements OnInit{
       });
 
     })
+  }
+
+  track(coAccueil : CoAccueil){
+    console.log("track", { coAccueil: coAccueil, accueillante: this.accueillante})
+    return { coAccueil: coAccueil, accueillante: this.accueillante}
   }
 
 
