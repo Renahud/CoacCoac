@@ -1,7 +1,6 @@
 import {Injectable} from "@angular/core";
-import {map, Observable, Subject} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {seq} from "./db"
-import {CoaccsService} from "./coaccs.service";
 import {comparatorOf} from "../model/comparators";
 
 
